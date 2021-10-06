@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Probabilidad de Un Dado</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+	<script type="text/javascript" src="Chart.js"></script>
+	<style type="text/css">
+	/*CSS FONDO*/
+	*{
+		margin: 0;
+		padding: 0;
+	}
+	section{
+		width: 100%;
+		height: 100vh;
+		color: black;
+		background: linear-gradient(45deg,red,blue,green,black);
+		background-size: 400% 400%;
+		position: relative;
+		animation: cambiar 10s ease-in-out infinite;
+	}
+	h1{
+		font-size: 4rem;
+		letter-spacing: 2px;
+		border: solid 3px #fff;
+		border-radius: 25px;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%,-50%);
+		padding: 2rem 3rem;
+	}
+
+	@keyframes cambiar{
+		0%{background-position: 0 50%;}
+		50%{background-position: 100% 50%;}
+		100%{background-position: 0 50%;}
+	}
+	/*CSS TABLA */
+		table.blueTable {
+	  border: 1px solid #1C6EA4;
+	  background-color: #EEEEEE;
+	  width: 100%;
+	  text-align: center;
+	  border-collapse: collapse;
+	}
+	table.blueTable td, table.blueTable th {
+	  border: 1px solid #AAAAAA;
+	  padding: 3px 2px;
+	}
+	table.blueTable tbody td {
+	  font-size: 13px;
+	}
+	table.blueTable tr:nth-child(even) {
+	  background: #D0E4F5;
+	}
+	table.blueTable thead {
+	  background: #2DA457;
+	  background: -moz-linear-gradient(top, #61bb81 0%, #42ad67 66%, #2DA457 100%);
+	  background: -webkit-linear-gradient(top, #61bb81 0%, #42ad67 66%, #2DA457 100%);
+	  background: linear-gradient(to bottom, #61bb81 0%, #42ad67 66%, #2DA457 100%);
+	  border-bottom: 2px solid #444444;
+	}
+	table.blueTable thead th {
+	  font-size: 15px;
+	  font-weight: bold;
+	  color: #FFFFFF;
+	  text-align: center;
+	  border-left: 2px solid #D0E4F5;
+	}
+	table.blueTable thead th:first-child {
+	  border-left: none;
+	}
+
+	table.blueTable tfoot td {
+	  font-size: 8px;
+	}
+	table.blueTable tfoot .links {
+	  text-align: right;
+	}
+	table.blueTable tfoot .links a{
+	  display: inline-block;
+	  background: #1C6EA4;
+	  color: #FFFFFF;
+	  padding: 2px 8px;
+	  border-radius: 5px;
+	}
+	</style>
+</head>
+<body>
+	<section>
+		<center>
+			<div style="width: 600px;background: rgba(255, 255, 255,0.7);padding: 100px;height: 100%;" >
+		    <h2 class="animate__animated animate__backInDown">Frecuencias de un Dado</h2>
+		    <h4 class="animate__animated animate__backInRight animate__delay-1s">Desarrolladores</h4><br>		    
+		    <h5 class="animate__animated animate__backInLeft animate__delay-2s"><i>Sebastian Achury, Eider Mora, Robinson Ortiz</i></h5><br>		    
+			<label for="domTextElement" >¿Cantidad de veces para lanzar un dado?: </label>
+			<input type="text" id="domTextElement" class="animate__animated animate__bounce"> 
+			<button name="submit" onclick="getValueInput()">Enviar</button>
+			<br>
+			<br>			
+			<table class="blueTable">
+				<thead>
+					<tr>
+						<th>Resultados</th>
+						<th>Uno</th>
+						<th>Dos</th>
+						<th>Tres</th>
+						<th>Cuatro</th>
+						<th>Cinco</th>
+						<th>Seis</th>
+					</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Frecuencia Absoluta</td>
+							<td id="dado1">0</td>
+							<td id="dado2">0</td>
+							<td id="dado3">0</td>
+							<td id="dado4">0</td>
+							<td id="dado5">0</td>
+							<td id="dado6">0</td>
+						</tr>
+						<tr>
+							<td>Frecuencia Acumulada</td>
+							<td id="acum1">0</td>
+							<td id="acum2">0</td>
+							<td id="acum3">0</td>
+							<td id="acum4">0</td>
+							<td id="acum5">0</td>
+							<td id="acum6">0</td>
+						</tr>
+						<tr>
+							<td>Frecuencia Relativa</td>
+							<td id="relav1">0</td>
+							<td id="relav2">0</td>
+							<td id="relav3">0</td>
+							<td id="relav4">0</td>
+							<td id="relav5">0</td>
+							<td id="relav6">0</td>
+						</tr>
+					</tbody>
+			</table>
+
+			<canvas id="grafico" width="400" height="300" class="animate__animated animate__bounce"></canvas>
+			
+			<script type="text/javascript">
+
+			function construirHtml(valorObtenido,cantPorUbi,cantidad_de_lanzamientos) {
+
+				document.getElementById("dado1").innerHTML = cantPorUbi[0];
+				document.getElementById("dado2").innerHTML = cantPorUbi[1];
+				document.getElementById("dado3").innerHTML = cantPorUbi[2];
+				document.getElementById("dado4").innerHTML = cantPorUbi[3];
+				document.getElementById("dado5").innerHTML = cantPorUbi[4];
+				document.getElementById("dado6").innerHTML = cantPorUbi[5];
+
+				document.getElementById("acum1").innerHTML = cantPorUbi[0];
+				document.getElementById("acum2").innerHTML = cantPorUbi[0]+cantPorUbi[1];
+				document.getElementById("acum3").innerHTML = cantPorUbi[0]+cantPorUbi[1]+cantPorUbi[2];
+				document.getElementById("acum4").innerHTML = cantPorUbi[0]+cantPorUbi[1]+cantPorUbi[2]+cantPorUbi[3];
+				document.getElementById("acum5").innerHTML = cantPorUbi[0]+cantPorUbi[1]+cantPorUbi[2]+cantPorUbi[3]+cantPorUbi[4];
+				document.getElementById("acum6").innerHTML = cantPorUbi[0]+cantPorUbi[1]+cantPorUbi[2]+cantPorUbi[3]+cantPorUbi[4]+cantPorUbi[5];
+
+				document.getElementById("relav1").innerHTML = ((cantPorUbi[0]*100)/cantidad_de_lanzamientos)+"%";
+				document.getElementById("relav2").innerHTML = ((cantPorUbi[1]*100)/cantidad_de_lanzamientos)+"%";
+				document.getElementById("relav3").innerHTML = ((cantPorUbi[2]*100)/cantidad_de_lanzamientos)+"%";
+				document.getElementById("relav4").innerHTML = ((cantPorUbi[3]*100)/cantidad_de_lanzamientos)+"%";
+				document.getElementById("relav5").innerHTML = ((cantPorUbi[4]*100)/cantidad_de_lanzamientos)+"%";
+				document.getElementById("relav6").innerHTML = ((cantPorUbi[5]*100)/cantidad_de_lanzamientos)+"%";
+
+			}
+			let myChart;
+
+			function getValueInput() {
+				var cantidad_de_lanzamientos = parseInt(document.getElementById("domTextElement").value); 
+		      	alert( "Cantidad de lanzamientos de un dado: " + cantidad_de_lanzamientos);
+				//Arreglo de todos los valores obtenidos
+				var valorObtenido = new Array();
+				//Arregjo de cantidad por ubicación
+				var cantPorUbi = new Array(); 
+				var cantPorUbi = [0,0,0,0,0,0];
+		      	for (var i =1; i <= cantidad_de_lanzamientos; i++) {
+		      		valor = Math.floor(Math.random() * 6)+1;
+		      		valorObtenido.push(valor);
+		      	}
+		      	var longArray = valorObtenido.length;
+				for (var i =0; i < longArray; i++) {
+					if (valorObtenido[i]==1){
+						//suma cuantos 1 hay en el arreglo "valorObtenido"
+						cantPorUbi[0] += 1; 
+					}
+					if (valorObtenido[i]==2){
+						//suma cuantos 2 hay en el arreglo "valorObtenido"
+						cantPorUbi[1] += 1; 
+					}
+					if (valorObtenido[i]==3){
+						//suma cuantos 3 hay en el arreglo "valorObtenido"
+						cantPorUbi[2] += 1; 
+					}if (valorObtenido[i]==4){
+						//suma cuantos 4 hay en el arreglo "valorObtenido"
+						cantPorUbi[3] += 1; 
+					}if (valorObtenido[i]==5){
+						//suma cuantos 5 hay en el arreglo "valorObtenido"
+						cantPorUbi[4] += 1; 
+					}if (valorObtenido[i]==6){
+						//suma cuantos 6 hay en el arreglo "valorObtenido"
+						cantPorUbi[5] += 1; 
+					}
+				}
+		      	console.log("longitud = "+  valorObtenido.length);
+		      	console.log("arreglo = "+  valorObtenido);
+		      	console.log("conteo de cada número = "+  cantPorUbi);
+		      	construirHtml(valorObtenido,cantPorUbi,cantidad_de_lanzamientos);
+
+		      	if (myChart){
+		      		console.log(myChart);
+		      		myChart.destroy();
+		      		console.log(myChart);
+		      	}		      
+
+		      	let miCanvas=document.getElementById("grafico").getContext("2d");		      	
+		        myChart = new Chart(miCanvas, {
+				    type: 'bar',
+				    data: {
+				        labels: ['Uno', 'Dos', 'Tres', 'Cuatro', 'Cinco', 'Seis'],
+				        datasets: [{
+				            label: 'Cantidad',
+				            data: [cantPorUbi[0],cantPorUbi[1],cantPorUbi[2],cantPorUbi[3],cantPorUbi[4],cantPorUbi[5]],
+				            backgroundColor: [
+				                'rgba(255, 99, 132, 0.2)',
+				                'rgba(54, 162, 235, 0.2)',
+				                'rgba(255, 206, 86, 0.2)',
+				                'rgba(75, 192, 192, 0.2)',
+				                'rgba(153, 102, 255, 0.2)',
+				                'rgba(255, 159, 64, 0.2)'
+				            ],
+				            borderColor: [
+				                'rgba(255, 99, 132, 1)',
+				                'rgba(54, 162, 235, 1)',
+				                'rgba(255, 206, 86, 1)',
+				                'rgba(75, 192, 192, 1)',
+				                'rgba(153, 102, 255, 1)',
+				                'rgba(255, 159, 64, 1)'
+				            ],
+				            borderWidth: 1
+				        }]
+				    },
+				    options: {
+				        scales: {
+				            y: {
+				                beginAtZero: true
+				            }
+				        }
+				    }
+				});
+
+		      }   
+			</script>			
+		</div>
+	</center>
+	</section>
+</body>
+</html>
